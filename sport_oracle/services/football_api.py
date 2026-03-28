@@ -122,12 +122,12 @@ def format_score(match: dict) -> str:
 
     if status in ("LIVE", "IN_PLAY", "PAUSED"):
         minute = match.get("minute", "")
-        tag = f"🔴 LIVE {minute}'" if minute else "🔴 LIVE"
+        tag = f" LIVE {minute}'" if minute else " LIVE"
     elif status == "FINISHED":
-        tag = "✅ FT"
+        tag = " FT"
     elif status == "SCHEDULED":
         utc_date = match.get("utcDate", "")
-        tag = f"🕐 {utc_date[11:16]} UTC" if utc_date else "🕐"
+        tag = f" {utc_date[11:16]} UTC" if utc_date else "time"
     else:
         tag = status
 
