@@ -24,11 +24,11 @@ Never give financial advice or encourage irresponsible gambling."""
 
 def analyse(prompt: str, context: str = "") -> str:
     full_prompt = f"{context}\n\n{prompt}" if context else prompt
+    contents = f"{SYSTEM_PROMPT}\n\n{full_prompt}"
     response = _client.models.generate_content(
         model=GEMINI_MODEL,
-        contents=full_prompt,
+        contents=contents,
         config=types.GenerateContentConfig(
-            system_instruction=SYSTEM_PROMPT,
             max_output_tokens=600,
         ),
     )
