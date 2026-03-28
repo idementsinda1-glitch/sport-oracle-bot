@@ -1,10 +1,11 @@
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 from sport_oracle.config import GEMINI_API_KEY, GEMINI_MODEL
 
-_client = genai.Client(api_key=GEMINI_API_KEY, http_options={"api_version": "v1"})
+genai.configure(api_key=GEMINI_API_KEY)
 
-SYSTEM_PROMPT = """You are Sport Oracle, an expert AI sports analyst specialising in football (soccer).
+_model = genai.GenerativeModel(
+    model_name=GEMINI_MODEL,
+    system_instruction="""You are Sport Oracle, an expert AI sports analyst specialising in football (soccer).
 You have deep knowledge of:
 - Team tactics, formations, and playing styles
 - Player profiles, strengths, and weaknesses
@@ -19,18 +20,15 @@ When analysing matches or making predictions:
 - Keep responses concise but insightful (max ~400 words)
 - Always include a confidence level (Low / Medium / High) for predictions
 
-Never give financial advice or encourage irresponsible gambling."""
+Never give financial advice or encourage irresponsible gambling.""",
+)
 
 
 def analyse(prompt: str, context: str = "") -> str:
     full_prompt = f"{context}\n\n{prompt}" if context else prompt
-    contents = f"{SYSTEM_PROMPT}\n\n{full_prompt}"
-    response = _client.models.generate_content(
-        model=GEMINI_MODEL,
-        contents=contents,
-        config=types.GenerateContentConfig(
-            max_output_tokens=600,
-        ),
+    response = _model.generate_content(
+        full_prompt,
+        generation_config=genai.GenerationConfig(max_output_tokens=600),
     )
     return response.text
 
