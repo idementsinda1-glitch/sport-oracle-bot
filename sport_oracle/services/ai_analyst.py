@@ -1,7 +1,8 @@
-import anthropic
-from sport_oracle.config import ANTHROPIC_API_KEY, CLAUDE_MODEL
+from google import genai
+from google.genai import types
+from sport_oracle.config import GEMINI_API_KEY, GEMINI_MODEL
 
-_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+_client = genai.Client(api_key=GEMINI_API_KEY)
 
 SYSTEM_PROMPT = """You are Sport Oracle, an expert AI sports analyst specialising in football (soccer).
 You have deep knowledge of:
@@ -23,13 +24,15 @@ Never give financial advice or encourage irresponsible gambling."""
 
 def analyse(prompt: str, context: str = "") -> str:
     full_prompt = f"{context}\n\n{prompt}" if context else prompt
-    message = _client.messages.create(
-        model=CLAUDE_MODEL,
-        max_tokens=600,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": full_prompt}],
+    response = _client.models.generate_content(
+        model=GEMINI_MODEL,
+        contents=full_prompt,
+        config=types.GenerateContentConfig(
+            system_instruction=SYSTEM_PROMPT,
+            max_output_tokens=600,
+        ),
     )
-    return message.content[0].text
+    return response.text
 
 
 def predict_match(home_team: str, away_team: str, competition: str, h2h_context: str = "") -> str:
