@@ -1,7 +1,7 @@
 import os
 
 TELEGRAM_BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
-ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
+GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 FOOTBALL_DATA_API_KEY = os.environ["FOOTBALL_DATA_API_KEY"]
 
 FOOTBALL_DATA_BASE_URL = "https://api.football-data.org/v4"
@@ -17,4 +17,4 @@ SUPPORTED_COMPETITIONS = {
     "WC": "World Cup",
 }
 
-CLAUDE_MODEL = "claude-3-5-haiku-20241022"
+GEMINI_MODEL = "gemini-1.5-flash"
