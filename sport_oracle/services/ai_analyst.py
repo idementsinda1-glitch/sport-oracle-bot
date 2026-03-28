@@ -1,46 +1,37 @@
 import os
-import google.generativeai as genai
+from groq import Groq
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+client = Groq(api_key=GROQ_API_KEY)
 
-genai.configure(api_key=GEMINI_API_KEY)
-
-SYSTEM_PROMPT = """You are Sport Oracle, an expert AI sports analyst. 
-Analyze football matches with detailed statistics, predictions, and betting insights.
-Always respond in French with emojis and clear structure."""
+SYSTEM_PROMPT = """Tu es Sport Oracle, un expert IA en analyse sportive.
+Analyse les matchs de football avec précision.
+Réponds toujours en français avec des emojis et une structure claire."""
 
 def get_ai_analysis(prompt: str) -> str:
     try:
-        model = genai.GenerativeModel("models/gemini-1.5-flash")
-        response = model.generate_content(SYSTEM_PROMPT + "\n\n" + prompt)
-        return response.text
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=1000
+        )
+        return response.choices[0].message.content
     except Exception as e:
-        return f"❌ Erreur analyse: {str(e)}"
+        return f"❌ Erreur: {str(e)}"
 
 async def analyze_match(home_team: str, away_team: str, match_data: dict) -> str:
-    prompt = f"""Analyse ce match de football:
-{home_team} vs {away_team}
-
+    prompt = f"""Analyse ce match: {home_team} vs {away_team}
 Données: {match_data}
-
-Donne:
-1. Analyse des deux équipes
-2. Prédiction du résultat avec probabilités
-3. Meilleur pari recommandé
-4. Niveau de confiance"""
+Donne: analyse des équipes, prédiction avec probabilités, meilleur pari, niveau de confiance."""
     return get_ai_analysis(prompt)
 
 async def analyze_player(player_name: str, team: str) -> str:
-    prompt = f"""Analyse complète du joueur {player_name} de {team}:
-- Stats récentes
-- Points forts/faibles  
-- Forme actuelle
-- Impact sur l'équipe"""
+    prompt = f"""Analyse du joueur {player_name} de {team}: stats, points forts/faibles, forme actuelle."""
     return get_ai_analysis(prompt)
 
 async def build_combo(matches: list) -> str:
-    prompt = f"""Construis le meilleur combiné avec ces matchs: {matches}
-- Sélectionne les paris les plus sûrs
-- Calcule la cote totale estimée
-- Donne le niveau de risque"""
+    prompt = f"""Construis le meilleur combiné avec: {matches}. Paris sûrs, cote totale, niveau de risque."""
     return get_ai_analysis(prompt)
