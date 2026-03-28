@@ -11,7 +11,7 @@ Always respond in French with emojis and clear structure."""
 
 def get_ai_analysis(prompt: str) -> str:
     try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("models/gemini-1.5-flash")
         response = model.generate_content(SYSTEM_PROMPT + "\n\n" + prompt)
         return response.text
     except Exception as e:
