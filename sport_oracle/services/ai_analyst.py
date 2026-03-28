@@ -20,7 +20,7 @@ def get_ai_analysis(prompt: str) -> str:
         )
         return response.choices[0].message.content
     except Exception as e:
-        return f"❌ Erreur: {str(e)}"
+        return f" Erreur: {str(e)}"
 
 async def analyze_match(home_team: str, away_team: str, match_data: dict) -> str:
     prompt = f"""Analyse ce match: {home_team} vs {away_team}
